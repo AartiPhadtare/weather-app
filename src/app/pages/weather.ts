@@ -15,131 +15,132 @@ import SunCalc from 'suncalc';
   selector: 'app-weather',
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   template: `
-    <div class="min-h-screen w-full ">
+    <div class="min-h-screen w-full bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900">
       <div
-        class="max-w-md mx-auto p-6 bg-blue-800 rounded-2xl min-h-screen backdrop-blur-md text-white bg-cover bg-center "
+        class="max-w-md lg:max-w-lg xl:max-w-xl mx-auto p-4 sm:p-6 lg:p-8 min-h-screen relative bg-cover bg-center"
         style="background-image:url('bg-home.jpg');"
       >
+        <!-- Enhanced Gradient Overlay -->
         <div
-          class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-50"
+          class="absolute inset-0 bg-gradient-to-br from-blue-900/70 via-purple-900/60 to-indigo-900/70 backdrop-blur-sm"
         ></div>
-        <!-- Gradient Overlay -->
-        <div class="absolute inset-0 top-5 p-7 text-white font-bold text-lg">
-          <form action="" [formGroup]="searchForm">
-            <div class="flex gap-2 mb-4">
-              <input
-                formControlName="city"
-                placeholder="Enter city..."
-                class="flex-1 p-3 rounded-lg bg-white/30 placeholder-white/70 text-white"
-              />
-              <button
-                (click)="getWeather()"
-                class="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-lg"
-              >
-                Search
-              </button>
-            </div>
-          </form>
+
+        <div class="relative z-10 h-full flex flex-col">
+          <div class="mb-6 sm:mb-8">
+            <form [formGroup]="searchForm" class="w-full">
+              <div class="flex flex-col sm:flex-row gap-3 sm:gap-2">
+                <input
+                  formControlName="city"
+                  placeholder="Enter city name..."
+                  class="flex-1 p-3 sm:p-4 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 placeholder-white/70 text-white text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:bg-white/25 transition-all duration-300"
+                />
+                <button
+                  (click)="getWeather()"
+                  type="button"
+                  class="bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-gray-900 font-semibold px-6 py-3 sm:py-4 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+                >
+                  <span class="hidden sm:inline">Search</span>
+                  <span class="sm:hidden">🔍</span>
+                </button>
+              </div>
+            </form>
+          </div>
 
           @if (myWeather) {
-          <div class="mt-8">
-            <div class="flex">
-              <div class="flex-1/2">
-                <div>
-                  <h2 class="text-3xl font-bold ">
-                    {{ myWeather.name }}, {{ country }}
+          <div class="flex-1 space-y-6 sm:space-y-8 animate-fade-in-up">
+            <div class="glass rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                <div class="space-y-2 sm:space-y-3">
+                  <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight">
+                    {{ myWeather.name }}
                   </h2>
-                  <p class="text-sm py-2.5">{{ localdate }}</p>
-                  <p class="">{{ myWeather.weather[0].description }}</p>
-                  <div class="flex justify-start">
-                    <p class="text-md font-semibold mr-4">
-                      H:{{ h | number : '1.0-0' }}
-                    </p>
-                    <p class="text-md font-semibold">
-                      L:{{ l | number : '1.0-0' }}
-                    </p>
+                  <p class="text-lg sm:text-xl text-yellow-300 font-medium">
+                    {{ country }}
+                  </p>
+                  <p class="text-sm sm:text-base text-white/80 mb-2">{{ localdate }}</p>
+                  <p class="text-base sm:text-lg text-white/90 capitalize font-medium">
+                    {{ myWeather.weather[0].description }}
+                  </p>
+                  <div class="flex gap-4 text-sm sm:text-base">
+                    <span class="text-white/80">
+                      H: <span class="text-orange-300 font-semibold">{{ h | number : '1.0-0' }}°</span>
+                    </span>
+                    <span class="text-white/80">
+                      L: <span class="text-blue-300 font-semibold">{{ l | number : '1.0-0' }}°</span>
+                    </span>
                   </div>
                 </div>
-              </div>
-              <div class="flex-1/2">
-                <p class="text-5xl font-semibold mb-3">
-                  {{ temperature | number : '1.0-0' }}°F
-                </p>
-                <img
-                  class=""
-                  [src]="
-                    'https://openweathermap.org/img/wn/' +
-                    myWeather.weather[0].icon +
-                    '@2x.png'
-                  "
-                  alt="Weather icon"
-                />
-              </div>
-            </div>
-            <!-- <h2 class="text-4xl font-bold mb-5">{{ myWeather.name }}, {{country}}</h2> -->
-            <!-- <p class="text-6xl font-semibold mb-3">{{ temperature }}°F</p>
-     <p class="">{{ myWeather.weather[0].description }}</p> -->
-            <!-- <img class=""
-      [src]="'https://openweathermap.org/img/wn/' + myWeather.weather[0].icon + '@2x.png'"
-      alt="Weather icon"
-    /> -->
 
-            <!-- <p class=" font-semibold mb-3 capitalize" >{{ myWeather.weather[0].description }}</p> -->
-
-            <div class="flex gap-2 justify-center mt-5">
-              <div class="flex-1/3 text-center">
-                <div class="p-3 bg-white text-blue-900 rounded-md">
-                  <p class="text-2xl mb-3">
-                    {{ feelsLikeTemp | number : '1.0-0' }}
-                  </p>
-                  <p class="text-sm ">Feels Like</p>
-                </div>
-              </div>
-              <div class="flex-1/3 text-center">
-                <div class="p-3 bg-white text-blue-900 rounded-md">
-                  <p class="text-2xl mb-3">{{ humidity }}%</p>
-                  <p class="text-sm ">Humidity</p>
-                </div>
-              </div>
-              <div class="flex-1/3 text-center">
-                <div class="p-3 bg-white text-blue-900 rounded-md">
-                  <p class="text-2xl mb-3">
-                    {{ wind | number : '1.0-0' }}
-                    <span class="text-sm">mph</span>
-                  </p>
-                  <p class="text-sm ">wind speed</p>
+                <div class="flex flex-col items-center lg:items-end justify-center space-y-2">
+                  <div class="text-5xl sm:text-6xl lg:text-7xl font-bold text-white animate-pulse-subtle">
+                    {{ temperature | number : '1.0-0' }}<span class="text-3xl sm:text-4xl lg:text-5xl text-yellow-300">°F</span>
+                  </div>
+                  <img
+                    class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 drop-shadow-lg hover:scale-110 transition-transform duration-300"
+                    [src]="
+                      'https://openweathermap.org/img/wn/' +
+                      myWeather.weather[0].icon +
+                      '@2x.png'
+                    "
+                    alt="Weather icon"
+                  />
                 </div>
               </div>
             </div>
-            <div class="flex gap-2 justify-center mt-5">
-              <div class="flex-1/2 gap-2 justify-center">
-                <div class="p-3 bg-white text-blue-900 rounded-md">
-                  <div class="flex items-center gap-2">
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div class="glass rounded-xl p-4 sm:p-5 hover:bg-white/20 transition-all duration-300 text-center transform hover:scale-105">
+                <div class="text-2xl sm:text-3xl font-bold text-white mb-2">
+                  {{ feelsLikeTemp | number : '1.0-0' }}°
+                </div>
+                <p class="text-xs sm:text-sm text-white/80 font-medium uppercase tracking-wide">Feels Like</p>
+              </div>
+
+              <div class="glass rounded-xl p-4 sm:p-5 hover:bg-white/20 transition-all duration-300 text-center transform hover:scale-105">
+                <div class="text-2xl sm:text-3xl font-bold text-blue-300 mb-2">{{ humidity }}%</div>
+                <p class="text-xs sm:text-sm text-white/80 font-medium uppercase tracking-wide">Humidity</p>
+              </div>
+
+              <div class="glass rounded-xl p-4 sm:p-5 hover:bg-white/20 transition-all duration-300 text-center transform hover:scale-105">
+                <div class="text-xl sm:text-2xl font-bold text-green-300 mb-2">
+                  {{ wind | number : '1.0-0' }}
+                  <span class="text-sm sm:text-base">mph</span>
+                </div>
+                <p class="text-xs sm:text-sm text-white/80 font-medium uppercase tracking-wide">Wind Speed</p>
+              </div>
+            </div>
+            <!-- Sunrise & Sunset -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <!-- Sunrise -->
+              <div class="bg-gradient-to-br from-orange-400/20 to-yellow-500/20 backdrop-blur-md rounded-xl p-4 sm:p-5 border border-orange-300/30 hover:from-orange-400/30 hover:to-yellow-500/30 transition-all duration-300">
+                <div class="flex items-center gap-3 sm:gap-4">
+                  <div class="bg-orange-100 rounded-full p-2 sm:p-3">
                     <img
-                      class="w-[30px] h-[30px]"
+                      class="w-6 h-6 sm:w-8 sm:h-8"
                       src="sunrise.png"
                       alt="sunrise"
                     />
-                    <div class="text-left">
-                      <p class="text-sm">Sunrise</p>
-                      <p>{{ sunrise }} AM</p>
-                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-xs sm:text-sm text-orange-200 font-medium uppercase tracking-wide mb-1">Sunrise</p>
+                    <p class="text-lg sm:text-xl font-bold text-white">{{ sunrise }}</p>
                   </div>
                 </div>
               </div>
 
-              <div class="flex-1/2 text-center">
-                <div class="p-3 bg-white text-blue-900 rounded-md">
-                  <div class="flex items-center gap-2">
+              <!-- Sunset -->
+              <div class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-md rounded-xl p-4 sm:p-5 border border-purple-300/30 hover:from-purple-500/30 hover:to-pink-500/30 transition-all duration-300">
+                <div class="flex items-center gap-3 sm:gap-4">
+                  <div class="bg-purple-100 rounded-full p-2 sm:p-3">
                     <img
-                      class="w-[30px] h-[30px]"
+                      class="w-6 h-6 sm:w-8 sm:h-8"
                       src="sunset.png"
-                      alt="sunrise"
+                      alt="sunset"
                     />
-                    <div class="text-left">
-                      <p class="text-sm">Sunset</p>
-                      <p>{{ sunset }} PM</p>
-                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-xs sm:text-sm text-purple-200 font-medium uppercase tracking-wide mb-1">Sunset</p>
+                    <p class="text-lg sm:text-xl font-bold text-white">{{ sunset }}</p>
                   </div>
                 </div>
               </div>
