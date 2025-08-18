@@ -55,7 +55,7 @@ import SunCalc from 'suncalc';
                     {{ myWeather.name }}
                   </h2>
                   <p class="text-lg sm:text-xl text-yellow-300 font-medium">
-                    {{ country }}
+                    {{ myWeather.sys.country }}
                   </p>
                   <p class="text-sm sm:text-base text-white/80 mb-2">{{ localdate }}</p>
                   <p class="text-base sm:text-lg text-white/90 capitalize font-medium">
@@ -63,17 +63,17 @@ import SunCalc from 'suncalc';
                   </p>
                   <div class="flex gap-4 text-sm sm:text-base">
                     <span class="text-white/80">
-                      H: <span class="text-orange-300 font-semibold">{{ h | number : '1.0-0' }}°</span>
+                      H: <span class="text-orange-300 font-semibold">{{ myWeather.main.temp_max | number : '1.0-0' }}°</span>
                     </span>
                     <span class="text-white/80">
-                      L: <span class="text-blue-300 font-semibold">{{ l | number : '1.0-0' }}°</span>
+                      L: <span class="text-blue-300 font-semibold">{{ myWeather.main.temp_min | number : '1.0-0' }}°</span>
                     </span>
                   </div>
                 </div>
 
                 <div class="flex flex-col items-center lg:items-end justify-center space-y-2">
                   <div class="text-5xl sm:text-6xl lg:text-7xl font-bold text-white animate-pulse-subtle">
-                    {{ temperature | number : '1.0-0' }}<span class="text-3xl sm:text-4xl lg:text-5xl text-yellow-300">°F</span>
+                    {{ myWeather.main.temp | number : '1.0-0' }}<span class="text-3xl sm:text-4xl lg:text-5xl text-yellow-300">°F</span>
                   </div>
                   <img
                     class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 drop-shadow-lg hover:scale-110 transition-transform duration-300"
@@ -91,19 +91,19 @@ import SunCalc from 'suncalc';
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               <div class="glass rounded-xl p-4 sm:p-5 hover:bg-white/20 transition-all duration-300 text-center transform hover:scale-105">
                 <div class="text-2xl sm:text-3xl font-bold text-white mb-2">
-                  {{ feelsLikeTemp | number : '1.0-0' }}°
+                  {{ myWeather.main.feels_like | number : '1.0-0' }}°
                 </div>
                 <p class="text-xs sm:text-sm text-white/80 font-medium uppercase tracking-wide">Feels Like</p>
               </div>
 
               <div class="glass rounded-xl p-4 sm:p-5 hover:bg-white/20 transition-all duration-300 text-center transform hover:scale-105">
-                <div class="text-2xl sm:text-3xl font-bold text-blue-300 mb-2">{{ humidity }}%</div>
+                <div class="text-2xl sm:text-3xl font-bold text-blue-300 mb-2">{{ myWeather.main.humidity }}%</div>
                 <p class="text-xs sm:text-sm text-white/80 font-medium uppercase tracking-wide">Humidity</p>
               </div>
 
               <div class="glass rounded-xl p-4 sm:p-5 hover:bg-white/20 transition-all duration-300 text-center transform hover:scale-105">
                 <div class="text-xl sm:text-2xl font-bold text-green-300 mb-2">
-                  {{ wind | number : '1.0-0' }}
+                  {{ myWeather.wind.speed | number : '1.0-0' }}
                   <span class="text-sm sm:text-base">mph</span>
                 </div>
                 <p class="text-xs sm:text-sm text-white/80 font-medium uppercase tracking-wide">Wind Speed</p>
@@ -123,7 +123,7 @@ import SunCalc from 'suncalc';
                   </div>
                   <div class="flex-1">
                     <p class="text-xs sm:text-sm text-orange-200 font-medium uppercase tracking-wide mb-1">Sunrise</p>
-                    <p class="text-lg sm:text-xl font-bold text-white">{{ sunrise }}</p>
+                    <p class="text-lg sm:text-xl font-bold text-white">{{ sunrise }} AM</p>
                   </div>
                 </div>
               </div>
@@ -140,7 +140,7 @@ import SunCalc from 'suncalc';
                   </div>
                   <div class="flex-1">
                     <p class="text-xs sm:text-sm text-purple-200 font-medium uppercase tracking-wide mb-1">Sunset</p>
-                    <p class="text-lg sm:text-xl font-bold text-white">{{ sunset }}</p>
+                    <p class="text-lg sm:text-xl font-bold text-white">{{ sunset }} PM</p>
                   </div>
                 </div>
               </div>
@@ -156,15 +156,11 @@ export class Weather implements OnInit {
   fb = inject(FormBuilder);
   weatherApi = inject(WeatherApi);
   myWeather: any;
-  temperature = 0;
+ 
   units = 'imperial';
-  feelsLikeTemp: number = 0;
-  summary: string = '';
+ 
   pressure: number = 0;
-  humidity: number = 0;
-  h: number = 0;
-  l: number = 0;
-  country: string = '';
+
   dt: number = 0;
   timezone: number = 0;
   localdate: string = '';
@@ -173,7 +169,7 @@ export class Weather implements OnInit {
   long: number = 0;
   sunrise: string = '';
   sunset: string = '';
-  wind: number = 0;
+
 
   searchForm = this.fb.group({
     city: ['', Validators.required],
@@ -223,14 +219,7 @@ export class Weather implements OnInit {
           this.sunset = times.sunset.toLocaleTimeString();
 
           console.log('timezone', this.timezone);
-          this.wind = this.myWeather.wind.speed;
-          this.temperature = this.myWeather.main.temp;
-          this.feelsLikeTemp = this.myWeather.main.feels_like;
-          this.h = this.myWeather.main.temp_max;
-          this.l = this.myWeather.main.temp_min;
-          this.summary = this.myWeather.weather[0].main;
-          this.humidity = this.myWeather.main.humidity;
-          this.country = this.myWeather.sys.country;
+
         },
         error: (error: HttpErrorResponse) => {
           console.error('Update failed:', error.message);
